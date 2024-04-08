@@ -3,8 +3,9 @@ import { VStack, Button, ButtonGroup, Heading } from "@chakra-ui/react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import TextField from "./TextField";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
-const LoginSchema = Yup.object().shape({
+const SignupSchema = Yup.object().shape({
 	email: Yup.string()
 		.email("Invalid email")
 		.min(5, "Min 5 characters")
@@ -16,7 +17,7 @@ const LoginSchema = Yup.object().shape({
 		.required("Required"),
 });
 
-export default function Login() {
+export default function Signup() {
 	const navigate = useNavigate();
 
 	const formikProps = {
@@ -24,7 +25,7 @@ export default function Login() {
 			email: "",
 			password: "",
 		},
-		validationSchema: LoginSchema,
+		validationSchema: SignupSchema,
 		onSubmit: (values, { resetForm }) => {
 			console.log(values);
 
@@ -39,18 +40,22 @@ export default function Login() {
 				m="auto"
 				justify="center"
 				h="100vh"
-				w={{ base: "70vw", md: "550px" }}
+				w={{ base: "70vw", md: "500px" }}
 			>
-				<Heading>Log In</Heading>
+				<Heading>Sign Up</Heading>
 				<TextField name="email" autoComplete="off" label="Email" />
 				<TextField name="password" autoComplete="off" label="Password" />
 
 				<ButtonGroup m={4}>
-					<Button px={16} size="lg" colorScheme="teal" type="submit">
-						Log In
+					<Button size="lg" colorScheme="teal" type="submit">
+						Create Account
 					</Button>
-					<Button size="lg" onClick={() => navigate("/register")}>
-						Create Account?
+					<Button
+						size="lg"
+						onClick={() => navigate("/")}
+						leftIcon={<ArrowBackIcon />}
+					>
+						Back to Login
 					</Button>
 				</ButtonGroup>
 			</VStack>
