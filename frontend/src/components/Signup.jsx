@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { VStack, Button, ButtonGroup, Heading } from "@chakra-ui/react";
-import { Formik } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import TextField from "./TextField";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import api from "../api";
 
 const SignupSchema = Yup.object().shape({
 	email: Yup.string()
@@ -26,17 +27,20 @@ export default function Signup() {
 			password: "",
 		},
 		validationSchema: SignupSchema,
-		onSubmit: (values, { resetForm }) => {
-			console.log(values);
+		onSubmit: async (values, { resetForm }) => {
+			const response = await api.post("/auth/register", values);
 
-			resetForm();
+			console.log({ response });
+			if (response.status === 201) {
+				resetForm();
+			}
 		},
 	};
 
 	return (
 		<Formik {...formikProps}>
 			<VStack
-				as="form"
+				as={Form}
 				m="auto"
 				justify="center"
 				h="100vh"
@@ -44,7 +48,12 @@ export default function Signup() {
 			>
 				<Heading>Sign Up</Heading>
 				<TextField name="email" autoComplete="off" label="Email" />
-				<TextField name="password" autoComplete="off" label="Password" />
+				<TextField
+					name="password"
+					autoComplete="new-password"
+					type="password"
+					label="Password"
+				/>
 
 				<ButtonGroup m={4}>
 					<Button size="lg" colorScheme="teal" type="submit">
