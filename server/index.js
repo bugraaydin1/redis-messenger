@@ -2,15 +2,44 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import helmet from "helmet";
+import dotenv from "dotenv";
+import session from "express-session";
 import { Server } from "socket.io";
+
+import authRouter from "./routers/authRouter.js";
+
+dotenv.config({
+	path: `.env.${process.env.NODE_ENV}`,
+});
 
 const app = express();
 app.use(helmet());
+app.use(
+	cors({
+		origin: "http://localhost:3000",
+		credentials: true,
+	})
+);
 app.use(express.json());
+app.use(
+	session({
+		name: "sid",
+		resave: false,
+		saveUninitialized: false,
+		secret: process.env.SESSION_SECRET,
+		cookie: {
+			httpOnly: true,
+			secure: process.env.ENVIRONMENT === "production" ? true : "auto",
+			sameSite: process.env.ENVIRONMENT === "production" ? "none" : "lax",
+		},
+	})
+);
 
 app.get("/", (req, res) => {
 	res.send("welcome!");
 });
+
+app.use("/api/auth", authRouter);
 
 const server = http.createServer(app);
 const io = new Server(server, {
