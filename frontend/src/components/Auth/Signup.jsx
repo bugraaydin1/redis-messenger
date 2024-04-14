@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { useAccountContext } from "../../context/AccountContext";
 import { VStack, Button, ButtonGroup, Heading } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import TextField from "./TextField";
+import TextField from "../TextField";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import api from "../api";
+import api from "../../api";
 
 const SignupSchema = Yup.object().shape({
 	email: Yup.string()
@@ -21,6 +22,8 @@ const SignupSchema = Yup.object().shape({
 export default function Signup() {
 	const navigate = useNavigate();
 
+	const { setUser } = useAccountContext();
+
 	const formikProps = {
 		initialValues: {
 			email: "",
@@ -33,6 +36,8 @@ export default function Signup() {
 			console.log({ response });
 			if (response.status === 201) {
 				resetForm();
+				setUser(response.data);
+				navigate("/chat");
 			}
 		},
 	};
