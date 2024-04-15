@@ -21,7 +21,6 @@ const SignupSchema = Yup.object().shape({
 
 export default function Signup() {
 	const navigate = useNavigate();
-
 	const { setUser } = useAccountContext();
 
 	const formikProps = {
@@ -33,7 +32,6 @@ export default function Signup() {
 		onSubmit: async (values, { resetForm }) => {
 			const response = await api.post("/auth/register", values);
 
-			console.log({ response });
 			if (response.status === 201) {
 				resetForm();
 				setUser(response.data);

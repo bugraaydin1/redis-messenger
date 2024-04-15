@@ -5,17 +5,23 @@ import pool from "../db.js";
 
 const router = express.Router();
 
+router.get("/login", (req, res) => {
+	const sessionUser = req.session.user;
+
+	if (sessionUser?.email) {
+		return res.json({ loggedIn: true, email: sessionUser.email });
+	}
+
+	res.json({ loggedIn: false });
+});
+
 router.post("/login", validateAuth, async (req, res) => {
 	const { email, password } = req.body;
-
-	console.log("session user:", req.session);
 
 	const userQuery = await pool.query(
 		`SELECT id, email, password FROM users WHERE email=$1`,
 		[email]
 	);
-
-	console.log(userQuery.rows);
 
 	if (userQuery.rowCount === 1) {
 		const hashedPwd = await userQuery.rows[0].password;

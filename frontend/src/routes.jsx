@@ -1,8 +1,5 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Layout from "./layout";
-import Login from "./components/Auth/Login";
-import Signup from "./components/Auth/Signup";
-import Chat from "./components/Chat";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 
 export const router = createBrowserRouter([
@@ -12,18 +9,22 @@ export const router = createBrowserRouter([
 		children: [
 			{
 				index: true,
-				element: <Login />,
+				lazy: async () => ({
+					Component: (await import("./components/Auth/Login")).default,
+				}),
 			},
 			{
 				path: "register",
-				element: <Signup />,
+				lazy: () => import("./components/Auth/Signup"),
 			},
 			{
 				element: <ProtectedRoutes />,
 				children: [
 					{
 						path: "chat",
-						element: <Chat />,
+						lazy: async () => ({
+							Component: (await import("./components/Chat")).default,
+						}),
 					},
 				],
 			},
@@ -31,6 +32,6 @@ export const router = createBrowserRouter([
 	},
 	{
 		path: "*",
-		element: <Login />,
+		element: <Navigate to="/" />,
 	},
 ]);

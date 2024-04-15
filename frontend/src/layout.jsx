@@ -1,7 +1,7 @@
 import ColorModeToggle from "./components/ColorModeToggle";
+import { AccountProvider } from "./context/AccountContext";
 import { ColorModeScript } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
-import { AccountProvider } from "./context/AccountContext";
 import theme from "./theme";
 
 function Layout() {
