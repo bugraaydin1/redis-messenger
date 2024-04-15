@@ -5,18 +5,14 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import session from "express-session";
 import RedisStore from "connect-redis";
-import { createClient } from "redis";
 import { Server } from "socket.io";
 
+import redisClient from "./redis.js";
 import authRouter from "./routers/authRouter.js";
 
 dotenv.config({
 	path: `.env.${process.env.NODE_ENV}`,
 });
-
-const redisClient = await createClient({ url: process.env.REDIS_URL })
-	.on("error", (err) => console.log("Redis client error:", err))
-	.connect();
 
 const app = express();
 app.use(helmet());
@@ -26,6 +22,7 @@ app.use(
 		credentials: true,
 	})
 );
+
 app.use(express.json());
 app.use(
 	session({

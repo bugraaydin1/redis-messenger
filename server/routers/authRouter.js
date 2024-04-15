@@ -5,11 +5,12 @@ import {
 	handleLoginSession,
 	handleSignup,
 } from "../controllers/authController.js";
+import rateLimiter from "../middlewares/rateLimiter.js";
 
 const router = express.Router();
 
 router.get("/login", handleLoginSession);
-router.post("/login", validateAuthForm, handleLogin);
-router.post("/register", validateAuthForm, handleSignup);
+router.post("/login", rateLimiter(30, 60), validateAuthForm, handleLogin);
+router.post("/register", rateLimiter(50, 60), validateAuthForm, handleSignup);
 
 export default router;
