@@ -4,6 +4,8 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import session from "express-session";
+import RedisStore from "connect-redis";
+import { createClient } from "redis";
 import { Server } from "socket.io";
 
 import authRouter from "./routers/authRouter.js";
@@ -11,6 +13,10 @@ import authRouter from "./routers/authRouter.js";
 dotenv.config({
 	path: `.env.${process.env.NODE_ENV}`,
 });
+
+const redisClient = await createClient({ url: process.env.REDIS_URL })
+	.on("error", (err) => console.log("Redis client error:", err))
+	.connect();
 
 const app = express();
 app.use(helmet());
@@ -26,6 +32,10 @@ app.use(
 		name: "sid",
 		resave: false,
 		saveUninitialized: false,
+		store: new RedisStore({
+			client: redisClient,
+			prefix: "messenger:",
+		}),
 		secret: process.env.SESSION_SECRET,
 		cookie: {
 			httpOnly: true,
