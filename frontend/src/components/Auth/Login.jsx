@@ -2,21 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useAccountContext } from "../../context/AccountContext";
 import { VStack, Button, ButtonGroup, Heading } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import * as Yup from "yup";
 import TextField from "../TextField";
+import { LoginSchema } from "../../validations";
 import api from "../../api";
-
-const LoginSchema = Yup.object().shape({
-	email: Yup.string()
-		.email("Invalid email")
-		.min(5, "Min 5 characters")
-		.max(30, "Max 30 characters")
-		.required("Required"),
-	password: Yup.string()
-		.min(8, "Min 8 characters")
-		.max(30, "Max 30 characters")
-		.required("Required"),
-});
 
 export default function Login() {
 	const navigate = useNavigate();

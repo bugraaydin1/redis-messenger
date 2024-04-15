@@ -5,7 +5,14 @@ export default function ColorModeToggle() {
 	const { colorMode, toggleColorMode } = useColorMode();
 
 	return (
-		<Button pos="absolute" top={0} right={0} m={2} onClick={toggleColorMode}>
+		<Button
+			pos="absolute"
+			top={0}
+			right={0}
+			m={2}
+			zIndex={100}
+			onClick={toggleColorMode}
+		>
 			{colorMode === "dark" ? (
 				<SunIcon color="orange.300" />
 			) : (

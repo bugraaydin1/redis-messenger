@@ -13,7 +13,7 @@ export default extendTheme({
 				justifyContent: "center",
 				placeItems: "center",
 				minHeight: "100vh",
-				minWidth: 320,
+				minWidth: "100vw",
 			},
 		},
 	},
