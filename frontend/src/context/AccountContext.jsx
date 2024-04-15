@@ -13,11 +13,12 @@ const AccountProvider = ({ children }) => {
 			try {
 				const response = await api.get("/auth/login");
 
-				if (response.status === 200) {
+				if (response.status === 200 && response.data.loggedIn) {
 					setUser(response.data);
 					navigate("/chat");
 				}
 			} catch (error) {
+				navigate("/");
 				setUser({ loggedIn: false, email: "" });
 			}
 		})();
