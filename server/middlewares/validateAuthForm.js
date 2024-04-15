@@ -12,7 +12,7 @@ const authSchema = Yup.object().shape({
 		.required("Password required"),
 });
 
-const validateAuth = async (req, res, next) => {
+const validateAuthForm = async (req, res, next) => {
 	const formData = req.body;
 
 	try {
@@ -28,4 +28,4 @@ const validateAuth = async (req, res, next) => {
 	next();
 };
 
-export default validateAuth;
+export default validateAuthForm;
