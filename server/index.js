@@ -3,45 +3,26 @@ import http from "http";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
-import session from "express-session";
-import RedisStore from "connect-redis";
 import { Server } from "socket.io";
 
-import redisClient from "./redis.js";
 import authRouter from "./routers/authRouter.js";
+import sessionMiddleware from "./middlewares/session.js";
 
 dotenv.config({
 	path: `.env.${process.env.NODE_ENV}`,
 });
 
+const corsConfig = {
+	origin: "http://localhost:3000",
+	credentials: true,
+};
+
 const app = express();
 app.use(helmet());
-app.use(
-	cors({
-		origin: "http://localhost:3000",
-		credentials: true,
-	})
-);
+app.use(cors(corsConfig));
 
 app.use(express.json());
-app.use(
-	session({
-		name: "sid",
-		resave: false,
-		saveUninitialized: false,
-		store: new RedisStore({
-			client: redisClient,
-			prefix: "messenger:",
-		}),
-		secret: process.env.SESSION_SECRET,
-		cookie: {
-			httpOnly: true,
-			maxAge: 1000 * 3600 * 24,
-			secure: process.env.ENVIRONMENT === "production" ? true : "auto",
-			sameSite: process.env.ENVIRONMENT === "production" ? "none" : "lax",
-		},
-	})
-);
+app.use(sessionMiddleware);
 
 app.get("/", (req, res) => {
 	res.send("welcome!");
@@ -50,15 +31,12 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRouter);
 
 const server = http.createServer(app);
-const io = new Server(server, {
-	cors: {
-		origin: "https://localhost:3000",
-		credentials: true,
-	},
-});
+const io = new Server(server, { cors: corsConfig });
+io.engine.use(sessionMiddleware);
 
-io.on("connection", (client) => {
-	console.log({ client });
+io.on("connect", (socket) => {
+	console.log("socket session:", socket.request.session);
+	console.log({ socket });
 });
 
 server.listen(5000, () => {
