@@ -2,7 +2,6 @@ import {
 	VStack,
 	HStack,
 	Heading,
-	Button,
 	Divider,
 	TabList,
 	useDisclosure,

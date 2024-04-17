@@ -1,9 +1,12 @@
 import { Grid, GridItem, Tabs } from "@chakra-ui/react";
 import Sidebar from "./Sidebar";
 import Messages from "./Messages";
+import useSocketConnect from "../../hooks/useSocketConnect";
 import { MessageProvider } from "../../context/MessageContext";
 
 export default function Chat() {
+	useSocketConnect();
+
 	return (
 		<MessageProvider>
 			<Grid
