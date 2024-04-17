@@ -13,6 +13,10 @@ const SignupSchema = Yup.object().shape({
 		.min(5, "Min 5 characters")
 		.max(30, "Max 30 characters")
 		.required("Required"),
+	name: Yup.string()
+		.min(5, "Min 5 characters")
+		.max(30, "Max 30 characters")
+		.required("Required"),
 	password: Yup.string()
 		.min(8, "Min 8 characters")
 		.max(30, "Max 30 characters")
@@ -25,6 +29,7 @@ export default function Signup() {
 
 	const formikProps = {
 		initialValues: {
+			name: "",
 			email: "",
 			password: "",
 		},
@@ -50,6 +55,7 @@ export default function Signup() {
 				w={{ base: "70vw", md: "500px" }}
 			>
 				<Heading>Sign Up</Heading>
+				<TextField name="name" autoComplete="off" label="Name" />
 				<TextField name="email" autoComplete="off" label="Email" />
 				<TextField
 					name="password"

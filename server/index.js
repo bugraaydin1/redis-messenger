@@ -5,8 +5,10 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
 
-import authRouter from "./routers/authRouter.js";
 import sessionMiddleware from "./middlewares/session.js";
+import socketAuthMiddleware from "./middlewares/socketAuth.js";
+
+import authRouter from "./routers/authRouter.js";
 
 dotenv.config({
 	path: `.env.${process.env.NODE_ENV}`,
@@ -33,10 +35,11 @@ app.use("/api/auth", authRouter);
 const server = http.createServer(app);
 const io = new Server(server, { cors: corsConfig });
 io.engine.use(sessionMiddleware);
+io.use(socketAuthMiddleware);
 
 io.on("connect", (socket) => {
-	console.log("socket session:", socket.request.session);
-	console.log({ socket });
+	console.log("socket id:", socket.id);
+	console.log("socket session:", socket.request.session.user);
 });
 
 server.listen(5000, () => {

@@ -15,7 +15,9 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: "register",
-				lazy: () => import("./components/Auth/Signup"),
+				lazy: async () => ({
+					Component: (await import("./components/Auth/Signup")).default,
+				}),
 			},
 			{
 				element: <ProtectedRoutes />,

@@ -19,7 +19,7 @@ const AccountProvider = ({ children }) => {
 				}
 			} catch (error) {
 				navigate("/");
-				setUser({ loggedIn: false, email: "" });
+				setUser({ loggedIn: false, email: "", name: "" });
 			}
 		})();
 	}, [navigate]);
