@@ -4,11 +4,16 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
+import redisClient from "./redis.js";
+
+import authRouter from "./routers/authRouter.js";
+import {
+	addFriend,
+	connectController,
+} from "./controllers/socketController.js";
 
 import sessionMiddleware from "./middlewares/session.js";
 import socketAuthMiddleware from "./middlewares/socketAuth.js";
-
-import authRouter from "./routers/authRouter.js";
 
 dotenv.config({
 	path: `.env.${process.env.NODE_ENV}`,
@@ -38,8 +43,11 @@ io.engine.use(sessionMiddleware);
 io.use(socketAuthMiddleware);
 
 io.on("connect", (socket) => {
-	console.log("socket id:", socket.id);
-	console.log("socket session:", socket.request.session.user);
+	connectController(socket);
+
+	socket.on("add_friend", (email, cb) => {
+		addFriend(socket, email, cb);
+	});
 });
 
 server.listen(5000, () => {

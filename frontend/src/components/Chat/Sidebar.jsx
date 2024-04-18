@@ -10,11 +10,15 @@ import {
 import ChatSnippet from "./ChatSnippet";
 import { ChatIcon } from "@chakra-ui/icons";
 import { useMessageContext } from "../../context/MessageContext";
+import { useFriendContext } from "../../context/FriendContext";
 import AddFriendModal from "./AddFriendModal";
 
 export default function Sidebar() {
 	const { chats } = useMessageContext();
+	const { friendList } = useFriendContext();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+
+	console.log({ friendList });
 
 	return (
 		<>
@@ -26,8 +30,8 @@ export default function Sidebar() {
 				<Divider />
 
 				<VStack as={TabList} w="100%" gap={0}>
-					{chats.map((chat) => (
-						<ChatSnippet key={chat.id} {...chat} />
+					{friendList.map((friend) => (
+						<ChatSnippet key={friend.email} {...friend} />
 					))}
 				</VStack>
 			</VStack>

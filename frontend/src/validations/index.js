@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-const LoginSchema = Yup.object().shape({
+const loginSchema = Yup.object().shape({
 	email: Yup.string()
 		.email("Invalid email")
 		.min(5, "Min 5 characters")
@@ -12,11 +12,12 @@ const LoginSchema = Yup.object().shape({
 		.required("Required"),
 });
 
-const FriendSchema = Yup.object({
-	friendName: Yup.string()
-		.min(5, "Invalid username")
-		.max(30, "Invalid username")
-		.required("Username required"),
+const friendSchema = Yup.object().shape({
+	friendEmail: Yup.string()
+		.email("Invalid email")
+		.min(5, "Invalid email")
+		.max(30, "Invalid email")
+		.required("User email required"),
 });
 
-export { LoginSchema, FriendSchema };
+export { loginSchema, friendSchema };

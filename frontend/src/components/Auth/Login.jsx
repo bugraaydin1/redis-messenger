@@ -3,7 +3,7 @@ import { useAccountContext } from "../../context/AccountContext";
 import { VStack, Button, ButtonGroup, Heading } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import TextField from "../TextField";
-import { LoginSchema } from "../../validations";
+import { loginSchema } from "../../validations";
 import api from "../../api";
 
 export default function Login() {
@@ -15,7 +15,7 @@ export default function Login() {
 			email: "",
 			password: "",
 		},
-		validationSchema: LoginSchema,
+		validationSchema: loginSchema,
 		onSubmit: async (values, { resetForm }) => {
 			const response = await api.post("/auth/login", values);
 

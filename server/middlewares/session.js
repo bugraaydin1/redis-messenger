@@ -8,7 +8,7 @@ const sessionMiddleware = session({
 	saveUninitialized: false,
 	store: new RedisStore({
 		client: redisClient,
-		prefix: "messenger:",
+		prefix: "session:",
 	}),
 	secret: process.env.SESSION_SECRET,
 	cookie: {

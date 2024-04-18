@@ -1,6 +1,8 @@
 import { Circle, HStack, Tab, Text } from "@chakra-ui/react";
 
-export default function ChatSnippet({ isOnline, name }) {
+export default function ChatSnippet({ email, name }) {
+	const isOnline = true;
+
 	return (
 		<HStack
 			as={Tab}
