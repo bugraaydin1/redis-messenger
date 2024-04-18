@@ -18,8 +18,6 @@ export default function Sidebar() {
 	const { friendList } = useFriendContext();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	console.log({ friendList });
-
 	return (
 		<>
 			<VStack py="1.4rem">

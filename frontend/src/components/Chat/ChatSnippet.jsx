@@ -1,8 +1,6 @@
 import { Circle, HStack, Tab, Text } from "@chakra-ui/react";
 
-export default function ChatSnippet({ email, name }) {
-	const isOnline = true;
-
+export default function ChatSnippet({ email, name, connected }) {
 	return (
 		<HStack
 			as={Tab}
@@ -13,8 +11,8 @@ export default function ChatSnippet({ email, name }) {
 			textAlign="start"
 			_selected={{ color: "white", bg: "teal" }}
 		>
-			<Circle bg={isOnline ? "green.400" : "red.700"} w="17px" h="17px" />
-			<Text flex={1}>{name}</Text>
+			<Circle bg={connected ? "green.400" : "red.700"} w="17px" h="17px" />
+			<Text flex={1}>{name || email}</Text>
 		</HStack>
 	);
 }

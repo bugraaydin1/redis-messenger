@@ -40,10 +40,9 @@ export default function AddFriendModal({ isOpen, onClose }) {
 							socket.emit(
 								"add_friend",
 								values.friendEmail,
-								({ success, errorMsg }) => {
-									console.log("socket cb:", { errorMsg, success });
+								({ success, friend, errorMsg }) => {
 									if (success) {
-										setFriendList((f) => [{ email: values.friendEmail }, ...f]);
+										setFriendList((f) => [friend, ...f]);
 										return onClose();
 									}
 

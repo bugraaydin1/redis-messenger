@@ -10,6 +10,7 @@ import authRouter from "./routers/authRouter.js";
 import {
 	addFriend,
 	connectController,
+	disconnectUser,
 } from "./controllers/socketController.js";
 
 import sessionMiddleware from "./middlewares/session.js";
@@ -43,10 +44,15 @@ io.engine.use(sessionMiddleware);
 io.use(socketAuthMiddleware);
 
 io.on("connect", (socket) => {
+	io.use(socketAuthMiddleware);
 	connectController(socket);
 
 	socket.on("add_friend", (email, cb) => {
 		addFriend(socket, email, cb);
+	});
+
+	socket.on("disconnecting", () => {
+		disconnectUser(socket);
 	});
 });
 

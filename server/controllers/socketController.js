@@ -2,11 +2,12 @@ import pool from "../db.js";
 import redisClient from "../redis.js";
 
 const connectController = async (socket) => {
-	await redisClient.hSet(
-		`userid:${socket.user.email}`,
-		"userid",
-		socket.user.userId
-	);
+	socket.join(socket.user.userId);
+
+	await redisClient.hSet(`userid:${socket.user.email}`, {
+		userid: socket.user.userId,
+		connected: "true",
+	});
 
 	const friendList = await redisClient.lRange(
 		`friends:${socket.user.email}`,
@@ -18,6 +19,13 @@ const connectController = async (socket) => {
 		"friend_list",
 		friendList.map((f) => JSON.parse(friendList))
 	);
+
+	// emit friends user as online
+	emitFriendsConnected({
+		socket,
+		socketUser: socket.user,
+		connectedStatus: "true",
+	});
 };
 
 const addFriend = async (socket, email, cb) => {
@@ -28,10 +36,10 @@ const addFriend = async (socket, email, cb) => {
 		});
 	}
 
-	// get userid of that email from Hash ~ {}
-	const friendId = await redisClient.hGet(`userid:${email}`, "userid");
+	// get email owner from Hash ~ {}
+	const friend = await redisClient.hGetAll(`userid:${email}`);
 
-	if (!friendId) {
+	if (!friend.userid) {
 		return cb({
 			errorMsg: "No user with this email",
 			success: false,
@@ -58,20 +66,54 @@ const addFriend = async (socket, email, cb) => {
 	}
 
 	// adding a new friend
-	if (friendId) {
+	if (friend.userid) {
 		const friendUserQuery = await pool.query(
-			`SELECT name from users WHERE email=$1`,
+			`SELECT name FROM users WHERE email=$1`,
 			[email]
 		);
 
-		const newFriend = JSON.stringify({
+		const newFriend = {
 			email,
+			userId: friend.userid,
 			name: friendUserQuery.rows[0].name,
-		});
+			connected: friend.connected,
+		};
 
-		await redisClient.lPush(`friends:${socket.user.email}`, newFriend);
-		return cb({ success: true });
+		await redisClient.lPush(
+			`friends:${socket.user.email}`,
+			JSON.stringify(newFriend)
+		);
+		return cb({ success: true, friend: newFriend });
 	}
 };
 
-export { addFriend, connectController };
+const disconnectUser = async (socket) => {
+	await redisClient.hSet(`userid:${socket.user.email}`, { connected: "false" });
+
+	emitFriendsConnected({
+		socket,
+		socketUser: socket.user,
+		connectedStatus: "false",
+	});
+};
+
+const emitFriendsConnected = async ({
+	socket,
+	socketUser,
+	connectedStatus,
+}) => {
+	const friendList = await redisClient.lRange(
+		`friends:${socketUser.email}`,
+		0,
+		-1
+	);
+	const friendRooms = friendList.map((f) => JSON.parse(f).userId);
+
+	console.log({ friendRooms, connectedStatus });
+
+	if (friendRooms.length > 0) {
+		socket.to(friendRooms).emit("connected", connectedStatus, socketUser);
+	}
+};
+
+export { addFriend, connectController, disconnectUser };

@@ -11,7 +11,24 @@ export default function useSocketConnect() {
 		socket.connect();
 
 		socket.on("friend_list", (friends) => {
-			setFriendList(friends);
+			const list = friends.map((f) => ({
+				...f,
+				connected: f.connected === "true",
+			}));
+			setFriendList(list);
+		});
+
+		socket.on("connected", (status, friend) => {
+			console.log({ status, friend });
+
+			setFriendList((prev) =>
+				prev.map((f) => {
+					if (f.email === friend.email) {
+						return { ...f, connected: status === "true" };
+					}
+					return f;
+				})
+			);
 		});
 
 		socket.on("connect_error", (err) => {
@@ -20,8 +37,9 @@ export default function useSocketConnect() {
 		});
 
 		return () => {
+			socket.off("connected");
 			socket.off("connect_error");
 			socket.off("friend_list");
 		};
-	}, [setUser]);
+	}, [setUser, setFriendList]);
 }
