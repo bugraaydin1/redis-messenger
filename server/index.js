@@ -11,6 +11,7 @@ import {
 	addFriend,
 	connectController,
 	disconnectUser,
+	messageController,
 } from "./controllers/socketController.js";
 
 import sessionMiddleware from "./middlewares/session.js";
@@ -46,6 +47,10 @@ io.use(socketAuthMiddleware);
 io.on("connect", (socket) => {
 	io.use(socketAuthMiddleware);
 	connectController(socket);
+
+	socket.on("dm", (message) => {
+		messageController(socket, message);
+	});
 
 	socket.on("add_friend", (email, cb) => {
 		addFriend(socket, email, cb);

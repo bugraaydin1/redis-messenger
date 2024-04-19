@@ -21,11 +21,24 @@ const connectController = async (socket) => {
 	);
 
 	// emit friends user as online
-	emitFriendsConnected({
+	emitConnectedToFriends({
 		socket,
 		socketUser: socket.user,
 		connectedStatus: "true",
 	});
+
+	const messages = await redisClient.lRange(
+		`chats:${socket.user.userId}`,
+		0,
+		-1
+	);
+
+	if (messages.length > 0) {
+		socket.emit(
+			"message_list",
+			messages.map((m) => JSON.parse(m))
+		);
+	}
 };
 
 const addFriend = async (socket, email, cb) => {
@@ -52,7 +65,6 @@ const addFriend = async (socket, email, cb) => {
 		0,
 		-1
 	);
-	console.log({ currentFriendList });
 
 	const friendAlreadyAdded = currentFriendList?.some(
 		(friendInfo) => JSON.parse(friendInfo).email === email
@@ -87,17 +99,26 @@ const addFriend = async (socket, email, cb) => {
 	}
 };
 
+const messageController = async (socket, message) => {
+	message.from ??= socket.user.userId;
+
+	await redisClient.lPush(`chats:${message.to}`, JSON.stringify(message));
+	await redisClient.lPush(`chats:${message.from}`, JSON.stringify(message));
+
+	socket.to(message.to).emit("dm", message);
+};
+
 const disconnectUser = async (socket) => {
 	await redisClient.hSet(`userid:${socket.user.email}`, { connected: "false" });
 
-	emitFriendsConnected({
+	emitConnectedToFriends({
 		socket,
 		socketUser: socket.user,
 		connectedStatus: "false",
 	});
 };
 
-const emitFriendsConnected = async ({
+const emitConnectedToFriends = async ({
 	socket,
 	socketUser,
 	connectedStatus,
@@ -109,11 +130,9 @@ const emitFriendsConnected = async ({
 	);
 	const friendRooms = friendList.map((f) => JSON.parse(f).userId);
 
-	console.log({ friendRooms, connectedStatus });
-
 	if (friendRooms.length > 0) {
 		socket.to(friendRooms).emit("connected", connectedStatus, socketUser);
 	}
 };
 
-export { addFriend, connectController, disconnectUser };
+export { addFriend, connectController, messageController, disconnectUser };

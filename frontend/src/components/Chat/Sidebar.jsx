@@ -7,14 +7,12 @@ import {
 	useDisclosure,
 	IconButton,
 } from "@chakra-ui/react";
-import ChatSnippet from "./ChatSnippet";
 import { ChatIcon } from "@chakra-ui/icons";
-import { useMessageContext } from "../../context/MessageContext";
 import { useFriendContext } from "../../context/FriendContext";
 import AddFriendModal from "./AddFriendModal";
+import ChatSnippet from "./ChatSnippet";
 
 export default function Sidebar() {
-	const { chats } = useMessageContext();
 	const { friendList } = useFriendContext();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 

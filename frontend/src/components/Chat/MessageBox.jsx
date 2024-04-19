@@ -6,20 +6,17 @@ import {
 	useColorModeValue,
 } from "@chakra-ui/react";
 
-export default function MessageBox({ message }) {
+export default function MessageBox({ isSender, content }) {
 	const bg = useColorModeValue(
-		message.isSender ? "teal.400" : "gray.100",
-		message.isSender && "teal"
+		isSender ? "teal.400" : "gray.100",
+		isSender && "teal"
 	);
 
 	return (
-		<HStack
-			my={2}
-			justifyContent={message.isSender ? "flex-end" : "flex-start"}
-		>
-			<Card w={2 / 5} bg={bg}>
+		<HStack my={1} mx={4} justifyContent={isSender ? "flex-end" : "flex-start"}>
+			<Card maxW="50%" px={1} size="sm" bg={bg}>
 				<CardBody>
-					<Text>{message.text}</Text>
+					<Text>{content}</Text>
 				</CardBody>
 			</Card>
 		</HStack>
