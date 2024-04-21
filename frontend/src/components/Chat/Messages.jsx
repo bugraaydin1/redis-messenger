@@ -9,8 +9,6 @@ export default function Messages({ tabIndex }) {
 	const { friendList } = useFriendContext();
 	const { messages } = useMessageContext();
 
-	console.log("ctx msgs:", messages);
-
 	const bottomRef = useRef();
 	const userId = friendList[tabIndex]?.userId;
 

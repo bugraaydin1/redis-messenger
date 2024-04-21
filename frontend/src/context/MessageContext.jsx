@@ -3,10 +3,7 @@ import { createContext, useContext, useState } from "react";
 const MessageContext = createContext();
 
 const MessageProvider = ({ children }) => {
-	const [messages, setMessages] = useState([
-		{ id: 1, isSender: true, text: "Hello" },
-		{ id: 2, isSender: false, text: "Hi. How are you?" },
-	]);
+	const [messages, setMessages] = useState([]);
 
 	return (
 		<MessageContext.Provider value={{ messages, setMessages }}>
@@ -18,7 +15,7 @@ const MessageProvider = ({ children }) => {
 const useMessageContext = () => {
 	const context = useContext(MessageContext);
 
-	if (context === null) {
+	if (context === undefined) {
 		throw new Error("useMessageState must be used within a MessageProvider");
 	}
 	return context;

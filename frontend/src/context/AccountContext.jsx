@@ -34,7 +34,7 @@ const AccountProvider = ({ children }) => {
 const useAccountContext = () => {
 	const context = useContext(AccountContext);
 
-	if (context === null) {
+	if (context === undefined) {
 		throw new Error("useAccountState must be used within a AccountProvider");
 	}
 	return context;

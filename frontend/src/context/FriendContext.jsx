@@ -15,7 +15,7 @@ const FriendProvider = ({ children }) => {
 const useFriendContext = () => {
 	const context = useContext(FriendContext);
 
-	if (context === null) {
+	if (context === undefined) {
 		throw new Error("useFriendContext must be used within a FriendProvider");
 	}
 	return context;
