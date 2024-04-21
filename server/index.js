@@ -12,6 +12,7 @@ import {
 	connectController,
 	disconnectUser,
 	messageController,
+	typingController,
 } from "./controllers/socketController.js";
 
 import sessionMiddleware from "./middlewares/session.js";
@@ -50,6 +51,10 @@ io.on("connect", (socket) => {
 
 	socket.on("dm", (message) => {
 		messageController(socket, message);
+	});
+
+	socket.on("typing", (typing) => {
+		typingController(socket, typing);
 	});
 
 	socket.on("add_friend", (email, cb) => {

@@ -3,11 +3,13 @@ import socket from "../socket";
 import { useAccountContext } from "../context/AccountContext";
 import { useFriendContext } from "../context/FriendContext";
 import { useMessageContext } from "../context/MessageContext";
+import { useNotificationContext } from "../context/NotificationContext";
 
 export default function useSocketConnect() {
 	const { setUser } = useAccountContext();
 	const { setFriendList } = useFriendContext();
 	const { setMessages } = useMessageContext();
+	const { setTypingFriends } = useNotificationContext();
 
 	useEffect(() => {
 		socket.connect();
@@ -25,7 +27,11 @@ export default function useSocketConnect() {
 		});
 
 		socket.on("dm", (message) => {
-			setMessages((m) => [message, ...m]);
+			setMessages((m) => [meslosage, ...m]);
+		});
+
+		socket.on("typing", (typing) => {
+			setTypingFriends((t) => ({ ...t, ...typing }));
 		});
 
 		socket.on("connected", (status, friend) => {

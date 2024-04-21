@@ -15,10 +15,12 @@ const connectController = async (socket) => {
 		-1
 	);
 
-	socket.emit(
-		"friend_list",
-		friendList.map((f) => JSON.parse(friendList))
-	);
+	if (friendList.length > 0) {
+		socket.emit(
+			"friend_list",
+			friendList.map((f) => JSON.parse(f))
+		);
+	}
 
 	// emit friends user as online
 	emitConnectedToFriends({
@@ -108,6 +110,13 @@ const messageController = async (socket, message) => {
 	socket.to(message.to).emit("dm", message);
 };
 
+const typingController = (socket, typing) => {
+	const { to: userId, status } = typing;
+	socket.to(userId).emit("typing", {
+		[socket.user.userId]: status,
+	});
+};
+
 const disconnectUser = async (socket) => {
 	await redisClient.hSet(`userid:${socket.user.email}`, { connected: "false" });
 
@@ -135,4 +144,10 @@ const emitConnectedToFriends = async ({
 	}
 };
 
-export { addFriend, connectController, messageController, disconnectUser };
+export {
+	addFriend,
+	connectController,
+	messageController,
+	typingController,
+	disconnectUser,
+};
