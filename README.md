@@ -27,7 +27,7 @@ A real-time chat web app where users can log in, add friends and communicate wit
   <br/>`PGUSER`
   <br/>`PGPASSWORD`
   <br/>`PGPORT`
-  <br/>`SESSION_SECRET`
+  <br/>`JWT_SECRET`
 - Initialize the database with the queries found in `packages/server/database.sql`
 - Note: all environment variables must be defined in files named `.env.development` and `.env.production`
 - Run `npm run dev:server` and `npm run dev:frontend`

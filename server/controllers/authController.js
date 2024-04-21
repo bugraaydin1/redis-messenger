@@ -1,19 +1,21 @@
+import jwt from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcrypt";
 import pool from "../db.js";
 
-const handleLoginSession = (req, res) => {
-	const sessionUser = req.session.user;
+const handleValidateLogin = (req, res) => {
+	const token = req.headers["authorization"]?.split(" ")?.[1];
 
-	if (sessionUser?.email) {
-		return res.json({
-			loggedIn: true,
-			email: sessionUser.email,
-			name: sessionUser.name,
-		});
+	if (!token) {
+		return res.json({ loggedIn: false });
 	}
 
-	res.json({ loggedIn: false });
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		return res.json({ loggedIn: true, token });
+	} catch (err) {
+		return res.json({ loggedIn: false });
+	}
 };
 
 const handleLogin = async (req, res) => {
@@ -33,13 +35,25 @@ const handleLogin = async (req, res) => {
 			const userId = userQuery.rows[0].userid;
 			const name = userQuery.rows[0].name;
 
-			req.session.user = {
-				id,
-				userId,
-				email,
-				name,
-			};
-			return res.json({ loggedIn: true, email, name });
+			try {
+				const token = jwt.sign(
+					{ name, email, userId },
+					process.env.JWT_SECRET,
+					{ expiresIn: "1d" }
+				);
+				return res.json({
+					loggedIn: true,
+					token,
+					name,
+					email,
+					userId,
+				});
+			} catch (error) {
+				return res.json({
+					loggedIn: false,
+					status: "Invalid token.",
+				});
+			}
 		}
 	}
 
@@ -64,13 +78,17 @@ const handleSignup = async (req, res) => {
 			[userId, name, email, hashedPw]
 		);
 
-		req.session.user = {
-			email,
-			name,
-			userId: userQuery.rows[0].userid,
-			id: userQuery.rows[0].id,
-		};
-		return res.status(201).json({ loggedIn: true, email, name });
+		try {
+			const token = jwt.sign({ name, email, userId }, process.env.JWT_SECRET, {
+				expiresIn: "1min",
+			});
+			return res.json({ loggedIn: true, token });
+		} catch (error) {
+			return res.json({
+				loggedIn: false,
+				status: "Invalid token.",
+			});
+		}
 	}
 
 	res
@@ -78,4 +96,4 @@ const handleSignup = async (req, res) => {
 		.json({ loggedIn: false, status: "this email is already registered" });
 };
 
-export { handleLogin, handleLoginSession, handleSignup };
+export { handleLogin, handleValidateLogin, handleSignup };

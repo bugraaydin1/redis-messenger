@@ -27,7 +27,7 @@ export default function useSocketConnect() {
 		});
 
 		socket.on("dm", (message) => {
-			setMessages((m) => [meslosage, ...m]);
+			setMessages((m) => [message, ...m]);
 		});
 
 		socket.on("typing", (typing) => {
@@ -56,5 +56,5 @@ export default function useSocketConnect() {
 			socket.off("message_list");
 			socket.off("connect_error");
 		};
-	}, [setUser, setFriendList]);
+	}, [setUser, setFriendList, setMessages, setTypingFriends]);
 }

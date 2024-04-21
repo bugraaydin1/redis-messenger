@@ -5,6 +5,7 @@ import { Formik, Form } from "formik";
 import TextField from "../TextField";
 import { loginSchema } from "../../validations";
 import api from "../../api";
+import socket from "../../socket";
 
 export default function Login() {
 	const navigate = useNavigate();
@@ -19,8 +20,11 @@ export default function Login() {
 		onSubmit: async (values, { resetForm }) => {
 			const response = await api.post("/auth/login", values);
 
-			if (response.status === 200) {
+			if (response.status === 200 && response.data.loggedIn) {
 				resetForm();
+				socket.auth.token = response.data.token;
+				localStorage.setItem("token", response.data.token);
+				localStorage.setItem("name", response.data.name);
 				setUser(response.data);
 				navigate("/chat");
 			}

@@ -5,8 +5,21 @@ import api from "../api";
 const AccountContext = createContext();
 
 const AccountProvider = ({ children }) => {
-	const [user, setUser] = useState({ loggedIn: null });
+	const [user, setUser] = useState({
+		loggedIn: null,
+		name: localStorage.getItem("name"),
+		token: localStorage.getItem("token"),
+	});
+
 	const navigate = useNavigate();
+
+	const logoutUser = () => {
+		navigate("/");
+		setUser({ loggedIn: false });
+		localStorage.removeItem("token");
+		localStorage.removeItem("name");
+		api.defaults.headers.common.Authorization = "";
+	};
 
 	useEffect(() => {
 		(async () => {
@@ -14,18 +27,19 @@ const AccountProvider = ({ children }) => {
 				const response = await api.get("/auth/login");
 
 				if (response.status === 200 && response.data.loggedIn) {
-					setUser(response.data);
+					setUser((u) => ({ ...u, ...response.data }));
 					navigate("/chat");
+				} else {
+					logoutUser();
 				}
 			} catch (error) {
-				navigate("/");
-				setUser({ loggedIn: false, email: "", name: "" });
+				logoutUser();
 			}
 		})();
 	}, [navigate]);
 
 	return (
-		<AccountContext.Provider value={{ user, setUser }}>
+		<AccountContext.Provider value={{ user, setUser, logoutUser }}>
 			{children}
 		</AccountContext.Provider>
 	);

@@ -15,7 +15,6 @@ import {
 	typingController,
 } from "./controllers/socketController.js";
 
-import sessionMiddleware from "./middlewares/session.js";
 import socketAuthMiddleware from "./middlewares/socketAuth.js";
 
 dotenv.config({
@@ -32,7 +31,6 @@ app.use(helmet());
 app.use(cors(corsConfig));
 
 app.use(express.json());
-app.use(sessionMiddleware);
 
 app.get("/", (req, res) => {
 	res.send("welcome!");
@@ -42,7 +40,6 @@ app.use("/api/auth", authRouter);
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: corsConfig });
-io.engine.use(sessionMiddleware);
 io.use(socketAuthMiddleware);
 
 io.on("connect", (socket) => {
