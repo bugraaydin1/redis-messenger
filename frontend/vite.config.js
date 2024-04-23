@@ -9,7 +9,9 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [react()],
 		server: {
+			host: true,
 			port: 3000,
+			strictPort: true,
 			proxy: {
 				"/api": {
 					target: env.VITE_BE_BASE_URL,

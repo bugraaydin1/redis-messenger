@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  frontend:
+    container_name: redis-messenger-frontend
+    image: node:20-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.production
+    ports:
+      - 3000:80
+    working_dir: /app
+    volumes:
+      - type: bind
+        source: ./
+        target: /app
+    tty: true
