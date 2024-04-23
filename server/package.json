@@ -6,7 +6,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "NODE_ENV=development node --watch index.js",
-		"start": "NODE_ENV=production node index.js"
+		"start": "NODE_ENV=production node index.js",
+		"docker-dev-up": "docker compose -f docker-compose.dev.yaml up",
+		"docker-dev-build": "npm run docker-dev-up -- --build --no-deps",
+		"docker-dev-down": "docker compose -f docker-compose.dev.yaml down"
 	},
 	"keywords": [],
 	"author": "",

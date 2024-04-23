@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  redis:
+    container_name: redis-messenger-redis
+    image: redis:7-alpine
+    ports:
+      - 6381:6379
+
+  nginx:
+    container_name: redis-messenger-nginx
+    build:
+      dockerfile: Dockerfile
+      context: ./server/nginx
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - api
+      - frontend
+
+  postgres:
+    container_name: redis-messenger-postgres
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_PASSWORD=securepassport
+
+  api:
+    container_name: redis-messenger-api
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    ports:
+      - 5000:5000
+    env_file:
+      - server/.env.development
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgres://postgres:securepassport@postgres:5432/postgres
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+
+  frontend:
+    container_name: redis-messenger-frontend
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
+    ports:
+      - 3000:3000
+    env_file:
+      - frontend/.env.development
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app
+    stdin_open: true

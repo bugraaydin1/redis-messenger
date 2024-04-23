@@ -10,7 +10,8 @@ const rateLimiter = (
 	period = defaultLimiterConfig.period
 ) => {
 	return async (req, res, next) => {
-		const pathIpKey = `${req.path}@${req.socket.remoteAddress}`;
+		const ip = req.headers["X-Forwarded-For"] || req.socket.remoteAddress;
+		const pathIpKey = `${req.path}@${ip}`;
 
 		const redisReply = await redisClient
 			.multi()

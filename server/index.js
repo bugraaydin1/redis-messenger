@@ -4,7 +4,6 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
-import redisClient from "./redis.js";
 
 import authRouter from "./routers/authRouter.js";
 import {
@@ -22,14 +21,13 @@ dotenv.config({
 });
 
 const corsConfig = {
-	origin: "http://localhost:3000",
+	origin: process.env.CLIENT_URL,
 	credentials: true,
 };
 
 const app = express();
 app.use(helmet());
 app.use(cors(corsConfig));
-
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -37,6 +35,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.set("trust proxy", 1);
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: corsConfig });
@@ -63,6 +62,6 @@ io.on("connect", (socket) => {
 	});
 });
 
-server.listen(5000, () => {
-	console.log("Server started on http://localhost:5000");
+server.listen(process.env.PORT || 5000, () => {
+	console.log(`Server started on http://localhost:${process.env.PORT || 5000}`);
 });

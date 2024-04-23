@@ -5,7 +5,13 @@
 	"main": "index.js",
 	"scripts": {
 		"dev:frontend": "cd frontend && npm run dev",
-		"dev:server": "cd server && npm run dev"
+		"dev:server": "cd server && npm run dev",
+		"docker-up": "docker compose up",
+		"docker-build": "npm run docker-up -- --build --no-deps",
+		"docker-down": "docker compose down",
+		"docker-dev-up": "docker compose -f docker-compose.dev.yaml up",
+		"docker-dev-build": "npm run docker-dev-up -- --build --no-deps --force-recreate",
+		"docker-dev-down": "docker compose -f docker-compose.dev.yaml down"
 	},
 	"keywords": [],
 	"author": "",
