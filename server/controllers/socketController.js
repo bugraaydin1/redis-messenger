@@ -89,7 +89,7 @@ const addFriend = async (socket, email, cb) => {
 		const newFriend = {
 			email,
 			userId: friend.userid,
-			name: friendUserQuery.rows[0].name,
+			name: friendUserQuery.rows[0]?.name,
 			connected: friend.connected,
 		};
 

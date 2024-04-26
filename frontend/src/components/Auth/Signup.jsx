@@ -40,7 +40,7 @@ export default function Signup() {
 			if (response.status === 201) {
 				resetForm();
 				setUser(response.data);
-				navigate("/chat");
+				navigate("/");
 			}
 		},
 	};

@@ -82,7 +82,7 @@ const handleSignup = async (req, res) => {
 			const token = jwt.sign({ name, email, userId }, process.env.JWT_SECRET, {
 				expiresIn: "1min",
 			});
-			return res.json({ loggedIn: true, token });
+			return res.status(201).json({ loggedIn: true, token });
 		} catch (error) {
 			return res.json({
 				loggedIn: false,
