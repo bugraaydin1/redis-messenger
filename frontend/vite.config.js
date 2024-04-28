@@ -12,6 +12,9 @@ export default defineConfig(({ mode }) => {
 			host: true,
 			port: 3000,
 			strictPort: true,
+			hmr: {
+				clientPort: 3000,
+			},
 			proxy: {
 				"/api": {
 					target: env.VITE_BE_BASE_URL,

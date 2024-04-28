@@ -2,7 +2,7 @@
 
 ## Description
 
-A real-time chat web app where users can log in, add friends and communicate with them in real time.
+A real time chat app where users can add friends and communicate with them.
 
 ## Project Structure
 
@@ -20,7 +20,7 @@ A real-time chat web app where users can log in, add friends and communicate wit
 
 - Clone the repository
 - CD into the repository and run `npm install`
-- Have a Redis instance listening on `localhost:6379` OR define an env variable named `REDIS_URL`
+- Have a Redis instance listening to `localhost:6379` OR define an env variable named `REDIS_URL`
 - Have a PostreSQL db running and provide either `DATABASE_URL` as an environment variable, or provide the following:
   <br/>`PGDATABASE`
   <br/>`PGHOST`
@@ -28,6 +28,5 @@ A real-time chat web app where users can log in, add friends and communicate wit
   <br/>`PGPASSWORD`
   <br/>`PGPORT`
   <br/>`JWT_SECRET`
-- Initialize the database with the queries found in `packages/server/database.sql`
 - Note: all environment variables must be defined in files named `.env.development` and `.env.production`
 - Run `npm run dev:server` and `npm run dev:frontend`
