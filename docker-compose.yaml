@@ -5,6 +5,11 @@ services:
     image: redis:7-alpine
     ports:
       - 6382:6379
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 5s
+      retries: 2
+      start_period: 5s
 
   nginx:
     container_name: redis-messenger-nginx
@@ -29,6 +34,11 @@ services:
       - POSTGRES_PASSWORD=s3curepass
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
     container_name: redis-messenger-api
@@ -46,6 +56,17 @@ services:
     volumes:
       - /app/node_modules
       - ./server:/app
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://api:5000"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
   frontend:
     container_name: redis-messenger-frontend
@@ -56,6 +77,15 @@ services:
       - /app/node_modules
       - ./frontend:/app
     stdin_open: true
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://frontend"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
 volumes:
   pgdata:
