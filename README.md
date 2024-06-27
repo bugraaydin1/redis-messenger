@@ -1,4 +1,5 @@
 # Redis Messenger
+![redis-messenger-screenshot](https://github.com/bugraaydin1/redis-messenger/assets/15525179/ab1e5cde-4702-4e02-9229-76bf4cf622af)
 
 ## Description
 
